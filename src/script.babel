@@ -1,0 +1,114 @@
+const isOperator = /[x/+‑]/;
+const endswith = /[=]$/;
+
+const operatorStyle = { background: '#666666' };
+const clearStyle = { background: '#ac3939',width:153 };
+const zeroStyle = {width:153};
+const equalStyle = {background:'#004466',height:104,position:'absolute'};
+
+
+class Calculator extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+    ques:'',
+    ans:''
+    }
+    this.handleClick = this.handleClick.bind(this);
+  }
+  
+  render(){
+    return(
+    <div className="frame">
+        <div className="calculator">
+          <Output ans={this.state.ans} ques={this.state.ques} />
+          <div className="button-row">
+            <Button label='AC' style={clearStyle} value='AC' id="clear" handleClick={this.handleClick} />
+            <Button label='/' style={operatorStyle} value='/' id="divide" handleClick={this.handleClick}/>
+            <Button label='*' style={operatorStyle} value='*' id="multiply" handleClick={this.handleClick}/>  
+          </div>
+          <div className="button-row">
+            <Button label='7' value='7' id="seven" handleClick={this.handleClick}/>
+            <Button label='8' value='8' id="eight" handleClick={this.handleClick}/>
+            <Button label='9' value='9' id="nine" handleClick={this.handleClick}/>
+            <Button label='+' style={operatorStyle} value='+' id="add" handleClick={this.handleClick}/>
+          </div>
+          <div className="button-row">
+            <Button label='4' value='4' id="four" handleClick={this.handleClick}/>
+            <Button label='5' value='5' id="five" handleClick={this.handleClick}/>
+            <Button label='6' value='6' id="six" handleClick={this.handleClick}/>
+            <Button label='-' style={operatorStyle} value='-' id="subtract" handleClick={this.handleClick}/>
+          </div>
+          <div className="button-row">
+            <Button label='1' value='1' id="one" handleClick={this.handleClick}/>
+            <Button label='2' value='2' id="two" handleClick={this.handleClick}/>
+            <Button label='3' value='3' id="three" handleClick={this.handleClick}/>
+            <Button label='=' style={equalStyle} value='=' id="equals" handleClick={this.handleClick} />
+          </div>
+          <div className="button-row">
+            <Button label='0' style={zeroStyle} value='0' id="zero" handleClick={this.handleClick}/>
+            <Button label='.' value='.' id="decimal" handleClick={this.handleClick}/>
+          </div>
+        </div>
+    </div>
+    );
+  }
+  handleClick(event) {
+    
+    const value = event.target.value;
+    
+    switch(value){
+      case '=': {
+       if(this.state.ques !== '')
+          {
+            var answer='';
+            try{
+              answer = eval(this.state.ques);                              
+            }
+            catch(err)
+              {
+                this.setState({ans:"Math Error"});
+              }
+            if(answer === undefined)
+                this.setState({ans:"Math Error"});
+            else
+              this.setState({ans:answer});
+          }
+        break;
+      
+    }
+      case 'AC': {
+        this.setState({ ques:'',ans:''})
+        break;
+      }
+      default: {
+        if(this.state.ans !== '')
+          this.setState({ques:this.state.ans+=value,ans:''})
+        else
+          this.setState({ques:this.state.ques += value});
+        break;
+      }  
+    }
+  }
+}
+const Display = (props) => {
+  return (
+     <div className="screen-row">
+       <input type="text" id={props.id} readOnly value={props.value} />
+     </div>
+  )
+}
+const Output = (props) => {
+  return(
+  <div className="screen"  >
+    <Display value={props.ques}/>
+    <Display id="display" value={props.ans}/>  
+  </div>
+  )
+}
+const Button = (props) => {
+  return(
+  <input type="button" id={props.id} value={props.label} onClick={props.handleClick} style={props.style} />
+  );
+}
+ReactDOM.render(<Calculator />,document.getElementById('app'));
